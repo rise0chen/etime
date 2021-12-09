@@ -1,5 +1,5 @@
 use core::time::Duration;
-use etime::Etime;
+use etime::{expect_time, Etime};
 use std::thread;
 
 fn main() {
@@ -7,5 +7,12 @@ fn main() {
     etime.tic();
     thread::sleep(Duration::from_secs(1));
     let elapsed = etime.toc();
-    println!("{:?}", elapsed);
+    expect_time(
+        elapsed,
+        Duration::ZERO..Duration::from_secs(2),
+        |_| unreachable!(),
+    );
+    expect_time(elapsed, Duration::ZERO..Duration::from_secs(1), |e| {
+        println!("failed: {:?}", e);
+    });
 }
