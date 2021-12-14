@@ -20,6 +20,10 @@ impl Etime {
             start: AtomicU64::new(0),
         }
     }
+    // ns
+    pub fn now(&self) -> u64 {
+        unsafe { CLOCK() }
+    }
     pub fn tic(&self) {
         let now = unsafe { CLOCK() };
         self.start.store(now, Ordering::Relaxed);
