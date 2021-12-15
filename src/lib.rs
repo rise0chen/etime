@@ -2,34 +2,37 @@ use std::ops::Range;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-static mut CLOCK: fn() -> u64 = || {
+const CLOCK: fn() -> u64 = || {
     let now = SystemTime::now();
     let since_the_epoch = now.duration_since(UNIX_EPOCH).expect("Time went backwards");
     since_the_epoch.as_nanos() as u64
 };
-pub unsafe fn set_clock_source(f: fn() -> u64) {
-    CLOCK = f;
-}
 
 pub struct Etime {
     start: AtomicU64,
+    clock: fn() -> u64,
 }
 impl Etime {
     pub const fn new() -> Self {
         Self {
             start: AtomicU64::new(0),
+            clock: CLOCK,
         }
     }
+    pub fn set_clock(&mut self, clock: fn() -> u64) {
+        self.clock = clock;
+    }
     // ns
+    #[inline]
     pub fn now(&self) -> u64 {
-        unsafe { CLOCK() }
+        (self.clock)()
     }
     pub fn tic(&self) {
-        let now = unsafe { CLOCK() };
+        let now = self.now();
         self.start.store(now, Ordering::Relaxed);
     }
     pub fn toc(&self) -> Duration {
-        let now = unsafe { CLOCK() };
+        let now = self.now();
         let start = self.start.load(Ordering::Relaxed);
         Duration::from_nanos(now - start)
     }
