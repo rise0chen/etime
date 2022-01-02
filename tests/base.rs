@@ -2,7 +2,8 @@ use core::time::Duration;
 use etime::{expect_time, Etime};
 use std::thread;
 
-fn main() {
+#[test]
+fn base() {
     let etime = Etime::new();
     etime.tic();
     thread::sleep(Duration::from_secs(1));

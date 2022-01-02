@@ -19,6 +19,7 @@ impl Etime {
             clock: CLOCK,
         }
     }
+    // ns
     pub fn set_clock(&mut self, clock: fn() -> u64) {
         self.clock = clock;
     }
@@ -38,8 +39,8 @@ impl Etime {
     }
 }
 
-pub fn expect_time(val: Duration, expect: Range<Duration>, on_failed: fn(&Duration)) {
+pub fn expect_time<F: FnOnce(Duration)>(val: Duration, expect: Range<Duration>, on_failed: F) {
     if !expect.contains(&val) {
-        on_failed(&val);
+        on_failed(val);
     }
 }
