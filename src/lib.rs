@@ -1,32 +1,22 @@
-use std::ops::Range;
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+#![no_std]
 
-const CLOCK: fn() -> u64 = || {
-    let now = SystemTime::now();
-    let since_the_epoch = now.duration_since(UNIX_EPOCH).expect("Time went backwards");
-    since_the_epoch.as_nanos() as u64
-};
+use core::ops::Range;
+use core::sync::atomic::{AtomicU64, Ordering};
+use core::time::Duration;
 
 pub struct Etime {
     start: AtomicU64,
-    clock: fn() -> u64,
 }
 impl Etime {
     pub const fn new() -> Self {
         Self {
             start: AtomicU64::new(0),
-            clock: CLOCK,
         }
-    }
-    // ns
-    pub fn set_clock(&mut self, clock: fn() -> u64) {
-        self.clock = clock;
     }
     // ns
     #[inline]
     pub fn now(&self) -> u64 {
-        (self.clock)()
+        clock_source::now().as_nanos() as u64
     }
     pub fn tic(&self) {
         let now = self.now();
