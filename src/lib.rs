@@ -16,7 +16,7 @@ impl Etime {
     // ns
     #[inline]
     pub fn now(&self) -> u64 {
-        clock_source::now().as_nanos() as u64
+        clock_source::now()
     }
     pub fn tic(&self) {
         let now = self.now();
