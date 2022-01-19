@@ -6,7 +6,7 @@ license-file = "LICENSE"
 name = "etime"
 readme = "./README.md"
 repository = "https://github.com/rise0chen/etime.git"
-version = "0.1.6"
+version = "0.1.7"
 
 [dependencies]
-clock_source = "0.2"
+clock_source = "0.2.1"
